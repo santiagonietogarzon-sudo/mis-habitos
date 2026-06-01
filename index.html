@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#7c3aed">
+<title>Mis Hábitos</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070f;
+  --bg2: #0f0f1a;
+  --bg3: #16162a;
+  --bg4: #1e1e35;
+  --glass: rgba(255,255,255,0.04);
+  --glass2: rgba(255,255,255,0.08);
+  --glass3: rgba(255,255,255,0.12);
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --purple: #7c3aed;
+  --purple2: #a855f7;
+  --purple3: #c084fc;
+  --purple4: #e9d5ff;
+  --green: #10b981;
+  --green2: #34d399;
+  --yellow: #f59e0b;
+  --orange: #f97316;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #475569;
+  --text4: #1e293b;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND GLOW ── */
+.bg-glow{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(124,58,237,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(168,85,247,0.07) 0%, transparent 60%);
+}
+
+/* ── SCREENS ── */
+.screen{display:none;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;min-height:100vh;}
+
+/* ═══════════════════════════════
+   LOGIN SCREEN
+═══════════════════════════════ */
+#screen-login{
+  align-items:center;justify-content:center;
+  padding:40px 24px;
+  background:var(--bg);
+}
+.login-logo{
+  font-size:72px;margin-bottom:24px;
+  filter:drop-shadow(0 0 30px rgba(168,85,247,0.5));
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.login-title{font-size:32px;font-weight:900;text-align:center;letter-spacing:-1px;margin-bottom:8px;}
+.login-subtitle{font-size:15px;color:var(--text2);text-align:center;margin-bottom:48px;}
+
+.login-form{width:100%;max-width:360px;}
+.login-input-wrap{position:relative;margin-bottom:16px;}
+.login-input{
+  width:100%;padding:16px 20px;
+  background:var(--glass2);
+  border:1px solid var(--border2);
+  border-radius:16px;
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:16px;font-weight:500;
+  transition:all 0.2s;
+}
+.login-input:focus{outline:none;border-color:var(--purple2);box-shadow:0 0 0 3px rgba(124,58,237,0.15);}
+.login-input::placeholder{color:var(--text3);}
+.login-input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;}
+
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:24px 0;}
+.pin-dot{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid var(--border2);
+  background:transparent;
+  transition:all 0.2s;
+}
+.pin-dot.filled{background:var(--purple2);border-color:var(--purple2);box-shadow:0 0 10px rgba(168,85,247,0.5);}
+
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.num-btn{
+  padding:18px;border-radius:16px;
+  background:var(--glass2);border:1px solid var(--border);
+  color:var(--text);font-family:'Inter',sans-serif;
+  font-size:22px;font-weight:700;cursor:pointer;
+  transition:all 0.15s;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.num-btn:active{transform:scale(0.94);background:var(--glass3);}
+.num-btn .num-letters{font-size:9px;font-weight:600;color:var(--text3);letter-spacing:1px;}
+.num-btn.action{font-size:18px;background:transparent;border-color:transparent;}
+.num-btn.del{color:var(--red);}
+
+.login-btn{
+  width:100%;padding:18px;border-radius:16px;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  border:none;color:white;
+  font-family:'Inter',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 8px 30px rgba(124,58,237,0.35);
+}
+.login-btn:active{transform:scale(0.98);}
+.login-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+.login-mode-toggle{text-align:center;margin-top:20px;}
+.login-mode-toggle span{color:var(--purple3);font-size:14px;font-weight:600;cursor:pointer;}
+
+.login-error{
+  text-align:center;color:var(--red);font-size:13px;
+  margin-top:12px;height:20px;font-weight:500;
+}
+
+/* Setup screen */
+.setup-step{display:none;}
+.setup-step.active{display:block;}
+.setup-header{text-align:center;margin-bottom:32px;}
+.setup-header h2{font-size:24px;font-weight:800;margin-bottom:8px;}
+.setup-header p{font-size:14px;color:var(--text2);}
+
+/* ═══════════════════════════════
+   MAIN APP
+═══════════════════════════════ */
+#screen-app{padding-bottom:90px;}
+
+/* HEADER */
+.app-header{
+  position:sticky;top:0;z-index:100;
+  padding:16px 20px 14px;
+  background:rgba(7,7,15,0.85);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.app-header-top{display:flex;justify-content:space-between;align-items:center;}
+.header-left .greeting{font-size:12px;color:var(--text2);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
+.header-left .date{font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.header-streak{
+  background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(168,85,247,0.2));
+  border:1px solid rgba(124,58,237,0.4);
+  border-radius:20px;padding:6px 14px;
+  font-size:13px;font-weight:700;
+}
+.avatar-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:white;
+  transition:transform 0.2s;
+}
+.avatar-btn:active{transform:scale(0.9);}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  display:flex;
+  background:rgba(10,10,20,0.95);
+  backdrop-filter:blur(24px);
+  border-top:1px solid var(--border);
+  padding:8px 0 max(8px,env(safe-area-inset-bottom));
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 4px;background:none;border:none;cursor:pointer;
+  color:var(--text3);transition:all 0.2s;
+}
+.nav-btn.active{color:var(--purple2);}
+.nav-btn .nav-icon{font-size:22px;transition:transform 0.2s;}
+.nav-btn.active .nav-icon{transform:scale(1.1);}
+.nav-btn .nav-label{font-size:10px;font-weight:600;letter-spacing:0.3px;}
+
+/* TAB CONTENT */
+.tab{display:none;padding:20px;animation:fadeIn 0.25s ease;}
+.tab.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:22px;padding:20px;
+  backdrop-filter:blur(10px);
+  margin-bottom:14px;
+}
+.card-sm{border-radius:18px;padding:16px;}
+.card-title{
+  font-size:11px;font-weight:700;color:var(--text2);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px;
+}
+
+/* ── HOY TAB ── */
+.progress-card{
+  background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(168,85,247,0.06));
+  border-color:rgba(124,58,237,0.25);
+  display:flex;flex-direction:column;align-items:center;
+  padding:28px 20px;
+}
+.ring-container{position:relative;width:190px;height:190px;margin-bottom:16px;}
+.ring-svg{transform:rotate(-90deg);overflow:visible;}
+.ring-track{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:13;}
+.ring-fill{
+  fill:none;stroke-width:13;stroke-linecap:round;
+  stroke-dasharray:534;stroke-dashoffset:534;
+  transition:stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1),stroke 0.6s ease;
+  filter:drop-shadow(0 0 8px currentColor);
+}
+.ring-inner{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);text-align:center;
+}
+.ring-num{font-size:54px;font-weight:900;line-height:1;letter-spacing:-2px;}
+.ring-denom{font-size:15px;color:var(--text2);font-weight:600;}
+.ring-pct{font-size:12px;color:var(--text3);font-weight:500;margin-top:2px;}
+.motivational{
+  font-size:14px;font-weight:600;color:var(--text2);
+  text-align:center;line-height:1.5;max-width:280px;
+}
+
+/* HABIT GRID */
+.habits-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;}
+.habit-card{
+  background:var(--glass);border:1.5px solid var(--border);
+  border-radius:20px;padding:16px 14px;
+  cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  display:flex;flex-direction:column;gap:8px;
+  user-select:none;position:relative;overflow:hidden;
+  -webkit-user-select:none;
+}
+.habit-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  opacity:0;transition:opacity 0.3s;border-radius:20px;
+}
+.habit-card.done{
+  border-color:rgba(124,58,237,0.6);
+  box-shadow:0 4px 24px rgba(124,58,237,0.2),inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.habit-card.done::after{opacity:0.1;}
+.habit-card:active{transform:scale(0.95);}
+.habit-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;}
+.habit-emoji{font-size:28px;line-height:1;}
+.habit-checkbox{
+  width:22px;height:22px;border-radius:7px;
+  border:2px solid var(--border2);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.3s;flex-shrink:0;
+}
+.habit-card.done .habit-checkbox{
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  border-color:transparent;
+  box-shadow:0 2px 8px rgba(124,58,237,0.4);
+}
+.habit-checkmark{
+  color:white;font-size:12px;font-weight:900;
+  opacity:0;transform:scale(0);
+  transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.habit-card.done .habit-checkmark{opacity:1;transform:scale(1);}
+.habit-name{font-size:13px;font-weight:600;line-height:1.3;position:relative;z-index:1;}
+.habit-streak-mini{font-size:11px;color:var(--text3);font-weight:500;position:relative;z-index:1;}
+.habit-card.done .habit-streak-mini{color:var(--purple3);}
+
+@keyframes popHabit{0%{transform:scale(1)}30%{transform:scale(1.07)}60%{transform:scale(0.97)}100%{transform:scale(1)}}
+.habit-card.popping{animation:popHabit 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+
+/* ENERGY */
+.energy-row{display:flex;gap:10px;}
+.energy-btn{
+  flex:1;padding:13px 8px;border-radius:14px;
+  border:1.5px solid var(--border);background:var(--glass);
+  color:var(--text2);font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;
+  transition:all 0.2s;text-align:center;
+}
+.energy-btn.sel-baja{border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.1);}
+.energy-btn.sel-media{border-color:var(--yellow);color:var(--yellow);background:rgba(245,158,11,0.1);}
+.energy-btn.sel-alta{border-color:var(--green);color:var(--green);background:rgba(16,185,129,0.1);}
+
+/* NOTE */
+.note-input{
+  width:100%;background:transparent;
+  border:none;color:var(--text);
+  font-family:'Inter',sans-serif;font-size:14px;
+  resize:none;height:70px;line-height:1.6;
+}
+.note-input:focus{outline:none;}
+.note-input::placeholder{color:var(--text3);}
+
+/* ── SEMANA TAB ── */
+.week-row{display:flex;gap:6px;justify-content:space-between;margin-bottom:20px;}
+.week-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.wd-name{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;}
+.wd-circle{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;transition:all 0.3s;
+  border:2px solid transparent;
+}
+.wd-pct{font-size:9px;color:var(--text3);font-weight:600;}
+.wd-circle.today{border-color:var(--purple2);box-shadow:0 0 14px rgba(168,85,247,0.4);}
+.wd-future{background:var(--bg3);color:var(--text4);}
+.wd-empty{background:var(--bg3);color:var(--text3);}
+.wd-low{background:rgba(239,68,68,0.18);color:var(--red);}
+.wd-mid{background:rgba(245,158,11,0.18);color:var(--yellow);}
+.wd-good{background:rgba(16,185,129,0.18);color:var(--green);}
+.wd-perfect{background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(168,85,247,0.25));color:var(--purple3);}
+
+.bar-wrap{display:flex;align-items:flex-end;gap:8px;height:90px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;}
+.bar-el{width:100%;border-radius:6px 6px 0 0;transition:height 0.9s cubic-bezier(0.4,0,0.2,1);min-height:3px;}
+.bar-lbl{font-size:10px;color:var(--text3);font-weight:600;}
+
+.missed-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.missed-emoji{font-size:18px;width:26px;text-align:center;}
+.missed-name-txt{font-size:13px;font-weight:500;flex:1;}
+.missed-track{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.missed-fill{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--red),var(--orange));transition:width 0.8s ease;}
+.missed-n{font-size:12px;color:var(--text2);font-weight:700;width:28px;text-align:right;}
+
+.best-day-box{
+  background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(52,211,153,0.06));
+  border:1px solid rgba(16,185,129,0.25);
+  border-radius:16px;padding:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.best-day-icon{font-size:32px;}
+.best-day-info .label{font-size:11px;font-weight:700;color:var(--green2);text-transform:uppercase;letter-spacing:1px;}
+.best-day-info .value{font-size:18px;font-weight:800;margin-top:2px;}
+
+/* ── MES TAB ── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.stat-box{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:18px;padding:16px 10px;text-align:center;
+}
+.stat-n{
+  font-size:26px;font-weight:900;
+  background:linear-gradient(135deg,var(--purple2),var(--purple3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.stat-l{font-size:10px;color:var(--text3);font-weight:600;margin-top:3px;line-height:1.3;}
+
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:5px;}
+.cal-head-d{font-size:10px;font-weight:700;color:var(--text3);text-align:center;text-transform:uppercase;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{
+  aspect-ratio:1;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;
+}
+.cal-cell:active{transform:scale(0.85);}
+.cal-empty{background:transparent;pointer-events:none;}
+.cal-future{background:var(--bg3);color:var(--text4);}
+.cal-nodata{background:var(--bg3);color:var(--text3);}
+.cal-low{background:rgba(239,68,68,0.22);color:var(--red);}
+.cal-mid{background:rgba(245,158,11,0.22);color:var(--yellow);}
+.cal-good{background:rgba(16,185,129,0.22);color:var(--green);}
+.cal-perfect{background:linear-gradient(135deg,var(--purple),var(--purple2));color:white;box-shadow:0 2px 10px rgba(124,58,237,0.4);}
+.cal-today-ring{outline:2px solid var(--purple2);outline-offset:2px;}
+
+.hc-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.hc-em{font-size:16px;width:24px;}
+.hc-nm{font-size:12px;font-weight:500;flex:0 0 90px;}
+.hc-track{flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.hc-fill{height:7px;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--purple2));transition:width 0.9s ease;}
+.hc-p{font-size:12px;font-weight:700;color:var(--text2);width:34px;text-align:right;}
+
+/* ── RACHAS TAB ── */
+.best-active{
+  background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(168,85,247,0.08));
+  border:1px solid rgba(124,58,237,0.35);
+  border-radius:22px;padding:24px;margin-bottom:16px;text-align:center;
+}
+.ba-label{font-size:11px;font-weight:700;color:var(--purple3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.ba-num{
+  font-size:72px;font-weight:900;line-height:1;letter-spacing:-3px;
+  background:linear-gradient(135deg,var(--purple2),var(--purple3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.ba-habit{font-size:16px;font-weight:600;color:var(--text2);margin-top:6px;}
+.ba-level{font-size:14px;font-weight:700;color:var(--purple3);margin-top:4px;}
+
+.str-card{
+  background:var(--glass);border:1.5px solid var(--border);
+  border-radius:20px;padding:18px;margin-bottom:12px;
+  display:flex;align-items:center;gap:14px;
+  transition:border-color 0.3s;
+}
+.str-card.alive{border-color:rgba(16,185,129,0.3);}
+.str-card.dead{opacity:0.6;}
+.str-emoji{font-size:30px;flex-shrink:0;}
+.str-info{flex:1;min-width:0;}
+.str-name{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.str-lvl{font-size:12px;color:var(--purple3);font-weight:600;margin-bottom:8px;}
+.str-pbar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.str-pfill{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--purple2));transition:width 0.8s ease;}
+.str-right{text-align:center;flex-shrink:0;}
+.str-days{
+  font-size:34px;font-weight:900;line-height:1;
+  background:linear-gradient(135deg,var(--purple2),var(--purple3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.str-dlabel{font-size:10px;color:var(--text3);font-weight:600;}
+.str-status{font-size:11px;margin-top:4px;}
+
+/* ── PROFILE PANEL ── */
+.panel-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);z-index:400;
+  display:none;align-items:flex-end;
+}
+.panel-overlay.open{display:flex;}
+.panel{
+  width:100%;background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:28px 28px 0 0;
+  padding:24px 24px 48px;
+  animation:slideUp 0.35s cubic-bezier(0.4,0,0.2,1);
+  max-height:85vh;overflow-y:auto;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.panel-handle{width:40px;height:4px;background:var(--bg4);border-radius:2px;margin:0 auto 24px;}
+.panel-avatar{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;font-weight:900;color:white;
+  margin:0 auto 12px;
+  box-shadow:0 8px 30px rgba(124,58,237,0.4);
+}
+.panel-name{font-size:24px;font-weight:800;text-align:center;margin-bottom:4px;}
+.panel-since{font-size:13px;color:var(--text2);text-align:center;margin-bottom:28px;}
+
+.panel-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px;}
+.ps-box{background:var(--glass2);border-radius:16px;padding:14px 8px;text-align:center;}
+.ps-num{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--purple2),var(--purple3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ps-lbl{font-size:10px;color:var(--text3);font-weight:600;margin-top:2px;}
+
+.panel-btn{
+  width:100%;padding:16px;border-radius:16px;
+  background:var(--glass2);border:1px solid var(--border);
+  color:var(--text);font-family:'Inter',sans-serif;
+  font-size:15px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:10px;transition:all 0.2s;
+}
+.panel-btn:active{background:var(--glass3);}
+.panel-btn.danger{color:var(--red);border-color:rgba(239,68,68,0.2);}
+.panel-btn .btn-icon{font-size:20px;width:28px;}
+
+/* ── DAY POPUP ── */
+.popup-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(10px);z-index:300;
+  display:none;align-items:flex-end;
+}
+.popup-overlay.open{display:flex;}
+.popup{
+  width:100%;background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:28px 28px 0 0;
+  padding:24px 20px 48px;
+  animation:slideUp 0.3s ease;
+}
+.popup-date-title{font-size:20px;font-weight:800;margin-bottom:16px;}
+.popup-habit-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.popup-habit-row:last-child{border-bottom:none;}
+.popup-status{font-size:18px;width:24px;}
+.popup-habit-name{font-size:14px;font-weight:500;}
+.popup-close-btn{
+  width:100%;margin-top:20px;padding:16px;
+  border-radius:16px;background:var(--glass2);
+  border:1px solid var(--border);color:var(--text);
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:600;
+  cursor:pointer;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:14px;padding:12px 20px;
+  font-size:14px;font-weight:600;
+  opacity:0;transition:all 0.3s;z-index:999;
+  white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── CONFETTI ── */
+@keyframes cfll{0%{transform:translateY(-80px) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(900deg);opacity:0}}
+.cf{position:fixed;pointer-events:none;z-index:9999;border-radius:2px;animation:cfll linear forwards;}
+
+/* UTILS */
+.gradient-text{background:linear-gradient(135deg,var(--purple2),var(--purple3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.section-label{font-size:16px;font-weight:700;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<!-- ════════════════════════
+     LOGIN SCREEN
+════════════════════════ -->
+<div class="screen active" id="screen-login">
+  <div id="view-login">
+    <div class="login-logo">👑</div>
+    <div class="login-title">Mis Hábitos</div>
+    <div class="login-subtitle">Tu sistema de alto rendimiento</div>
+
+    <div class="login-form">
+      <div class="pin-dots" id="pin-dots">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+      </div>
+      <div class="numpad" id="numpad">
+        <button class="num-btn" onclick="numInput('1')">1</button>
+        <button class="num-btn" onclick="numInput('2')">2<div class="num-letters">ABC</div></button>
+        <button class="num-btn" onclick="numInput('3')">3<div class="num-letters">DEF</div></button>
+        <button class="num-btn" onclick="numInput('4')">4<div class="num-letters">GHI</div></button>
+        <button class="num-btn" onclick="numInput('5')">5<div class="num-letters">JKL</div></button>
+        <button class="num-btn" onclick="numInput('6')">6<div class="num-letters">MNO</div></button>
+        <button class="num-btn" onclick="numInput('7')">7<div class="num-letters">PQRS</div></button>
+        <button class="num-btn" onclick="numInput('8')">8<div class="num-letters">TUV</div></button>
+        <button class="num-btn" onclick="numInput('9')">9<div class="num-letters">WXYZ</div></button>
+        <button class="num-btn action" onclick="numClear()">⌫</button>
+        <button class="num-btn" onclick="numInput('0')">0</button>
+        <button class="num-btn action" onclick="numSubmit()">OK</button>
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <div class="login-mode-toggle">
+        <span onclick="showSetup()">¿Primera vez? Configura tu perfil →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="view-setup" style="display:none;width:100%;max-width:360px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:48px;margin-bottom:12px;">✨</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:8px;">Configura tu perfil</div>
+      <div style="font-size:14px;color:var(--text2);">Solo una vez. Tarda 30 segundos.</div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Tu nombre</div>
+      <div class="login-input-wrap">
+        <input class="login-input" id="setup-name" type="text" placeholder="¿Cómo te llamas?" maxlength="20">
+        <div class="login-input-icon">👤</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Crea tu PIN (4 dígitos)</div>
+      <div class="pin-dots" id="setup-pin-dots">
+        <div class="pin-dot" id="sdot-0"></div>
+        <div class="pin-dot" id="sdot-1"></div>
+        <div class="pin-dot" id="sdot-2"></div>
+        <div class="pin-dot" id="sdot-3"></div>
+      </div>
+      <div class="numpad" style="margin-top:16px;">
+        <button class="num-btn" onclick="setupNum('1')">1</button>
+        <button class="num-btn" onclick="setupNum('2')">2<div class="num-letters">ABC</div></button>
+        <button class="num-btn" onclick="setupNum('3')">3<div class="num-letters">DEF</div></button>
+        <button class="num-btn" onclick="setupNum('4')">4<div class="num-letters">GHI</div></button>
+        <button class="num-btn" onclick="setupNum('5')">5<div class="num-letters">JKL</div></button>
+        <button class="num-btn" onclick="setupNum('6')">6<div class="num-letters">MNO</div></button>
+        <button class="num-btn" onclick="setupNum('7')">7<div class="num-letters">PQRS</div></button>
+        <button class="num-btn" onclick="setupNum('8')">8<div class="num-letters">TUV</div></button>
+        <button class="num-btn" onclick="setupNum('9')">9<div class="num-letters">WXYZ</div></button>
+        <button class="num-btn action" onclick="setupDel()">⌫</button>
+        <button class="num-btn" onclick="setupNum('0')">0</button>
+        <button class="num-btn action" style="font-size:14px;" onclick="finishSetup()">OK</button>
+      </div>
+    </div>
+    <div class="login-error" id="setup-error"></div>
+    <button class="login-btn" style="margin-top:8px;" onclick="finishSetup()">Comenzar 🚀</button>
+    <div class="login-mode-toggle" style="margin-top:16px;">
+      <span onclick="showLogin()">← Ya tengo cuenta</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════
+     MAIN APP
+════════════════════════ -->
+<div class="screen" id="screen-app">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div class="app-header-top">
+      <div class="header-left">
+        <div class="greeting" id="h-greeting">BUENOS DÍAS</div>
+        <div class="date" id="h-date">Cargando...</div>
+      </div>
+      <div class="header-right">
+        <div class="header-streak" id="h-streak">🔥 0 días</div>
+        <button class="avatar-btn" id="avatar-btn" onclick="openPanel()">S</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab active" id="tab-hoy">
+    <!-- Progress ring -->
+    <div class="card progress-card">
+      <div class="ring-container">
+        <svg class="ring-svg" width="190" height="190" viewBox="0 0 190 190">
+          <circle class="ring-track" cx="95" cy="95" r="85"/>
+          <circle class="ring-fill" id="ring-fill" cx="95" cy="95" r="85"/>
+        </svg>
+        <div class="ring-inner">
+          <div class="ring-num gradient-text" id="ring-num">0</div>
+          <div class="ring-denom">de 9</div>
+          <div class="ring-pct" id="ring-pct">0%</div>
+        </div>
+      </div>
+      <div class="motivational" id="motivational">Todo empieza con el primer paso. 💫</div>
+    </div>
+
+    <!-- Habits -->
+    <div class="habits-grid" id="habits-grid"></div>
+
+    <!-- Energy -->
+    <div class="card card-sm">
+      <div class="card-title">Energía del día</div>
+      <div class="energy-row">
+        <button class="energy-btn" id="e-baja" onclick="setEnergy('baja')">🔴 Baja</button>
+        <button class="energy-btn" id="e-media" onclick="setEnergy('media')">🟡 Media</button>
+        <button class="energy-btn" id="e-alta" onclick="setEnergy('alta')">🟢 Alta</button>
+      </div>
+    </div>
+
+    <!-- Note -->
+    <div class="card card-sm">
+      <div class="card-title">Nota del día</div>
+      <textarea class="note-input" id="note-input" placeholder="Una victoria, un aprendizaje, un pensamiento..." oninput="saveNote()"></textarea>
+    </div>
+  </div>
+
+  <div class="tab" id="tab-semana">
+    <div class="card">
+      <div class="card-title">Esta semana</div>
+      <div class="week-row" id="week-row"></div>
+      <div class="bar-wrap" id="bar-wrap"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Hábitos más fallados</div>
+      <div id="missed-wrap"></div>
+    </div>
+    <div id="best-day-wrap"></div>
+  </div>
+
+  <div class="tab" id="tab-mes">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="card">
+      <div class="card-title" id="month-title">Mayo 2026</div>
+      <div class="cal-head">
+        <div class="cal-head-d">L</div><div class="cal-head-d">M</div>
+        <div class="cal-head-d">M</div><div class="cal-head-d">J</div>
+        <div class="cal-head-d">V</div><div class="cal-head-d">S</div>
+        <div class="cal-head-d">D</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Consistencia por hábito</div>
+      <div id="hc-wrap"></div>
+    </div>
+  </div>
+
+  <div class="tab" id="tab-rachas">
+    <div class="best-active" id="best-active">
+      <div class="ba-label">🏆 Tu mejor racha activa</div>
+      <div class="ba-num" id="ba-num">0</div>
+      <div class="ba-habit" id="ba-habit">Sin rachas activas aún</div>
+      <div class="ba-level" id="ba-level"></div>
+    </div>
+    <div id="streaks-wrap"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-hoy" onclick="switchTab('hoy')">
+      <span class="nav-icon">🏠</span><span class="nav-label">Hoy</span>
+    </button>
+    <button class="nav-btn" id="nav-semana" onclick="switchTab('semana')">
+      <span class="nav-icon">📅</span><span class="nav-label">Semana</span>
+    </button>
+    <button class="nav-btn" id="nav-mes" onclick="switchTab('mes')">
+      <span class="nav-icon">📆</span><span class="nav-label">Mes</span>
+    </button>
+    <button class="nav-btn" id="nav-rachas" onclick="switchTab('rachas')">
+      <span class="nav-icon">🏆</span><span class="nav-label">Rachas</span>
+    </button>
+  </nav>
+</div>
+
+<!-- PROFILE PANEL -->
+<div class="panel-overlay" id="panel-overlay" onclick="closePanelClick(event)">
+  <div class="panel">
+    <div class="panel-handle"></div>
+    <div class="panel-avatar" id="panel-avatar">S</div>
+    <div class="panel-name" id="panel-name">Usuario</div>
+    <div class="panel-since" id="panel-since">Miembro desde hoy</div>
+    <div class="panel-stats" id="panel-stats"></div>
+    <button class="panel-btn" onclick="exportData()"><span class="btn-icon">📤</span> Exportar mis datos</button>
+    <button class="panel-btn" onclick="changePin()"><span class="btn-icon">🔒</span> Cambiar PIN</button>
+    <button class="panel-btn danger" onclick="confirmLogout()"><span class="btn-icon">🚪</span> Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- DAY POPUP -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopupClick(event)">
+  <div class="popup">
+    <div class="popup-date-title" id="popup-title"></div>
+    <div id="popup-habits-list"></div>
+    <button class="popup-close-btn" onclick="closePopup()">Cerrar</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════
+// DATA
+// ═══════════════════════════════════
+const HABITS = [
+  {emoji:'💪', name:'Gimnasio'},
+  {emoji:'📚', name:'Lectura'},
+  {emoji:'🧘', name:'Meditación'},
+  {emoji:'💰', name:'Finanzas'},
+  {emoji:'🗣️', name:'Idioma'},
+  {emoji:'🌅', name:'Rutina AM'},
+  {emoji:'🌙', name:'Rutina PM'},
+  {emoji:'💧', name:'Hidratación'},
+  {emoji:'👑', name:'Soy el que controla'},
+];
+const N = HABITS.length;
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DAYS_ES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const DAYS_SHORT = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function today(){ return dateKey(new Date()); }
+function getDay(k){ const r=localStorage.getItem('day_'+k); return r?JSON.parse(r):{habits:new Array(N).fill(false),energy:'',note:''}; }
+function setDay(k,d){ localStorage.setItem('day_'+k,JSON.stringify(d)); }
+function getUser(){ const r=localStorage.getItem('user'); return r?JSON.parse(r):null; }
+function setUser(u){ localStorage.setItem('user',JSON.stringify(u)); }
+
+// ═══════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════
+let pinBuffer = '';
+let setupPinBuffer = '';
+
+function showLogin(){ document.getElementById('view-login').style.display=''; document.getElementById('view-setup').style.display='none'; pinBuffer=''; renderPinDots(); }
+function showSetup(){ document.getElementById('view-login').style.display='none'; document.getElementById('view-setup').style.display=''; }
+
+function renderPinDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('dot-'+i);
+    d.classList.toggle('filled', i<pinBuffer.length);
+  }
+}
+function renderSetupDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('sdot-'+i);
+    d.classList.toggle('filled', i<setupPinBuffer.length);
+  }
+}
+
+function numInput(n){
+  if(pinBuffer.length>=4) return;
+  pinBuffer+=n;
+  renderPinDots();
+  if(pinBuffer.length===4) setTimeout(numSubmit,200);
+}
+function numClear(){ pinBuffer=pinBuffer.slice(0,-1); renderPinDots(); }
+function numSubmit(){
+  const user=getUser();
+  if(!user){ showToast('Configura tu perfil primero'); showSetup(); return; }
+  if(pinBuffer===user.pin){
+    document.getElementById('login-error').textContent='';
+    launchApp();
+  } else {
+    document.getElementById('login-error').textContent='PIN incorrecto. Inténtalo de nuevo.';
+    pinBuffer=''; renderPinDots();
+    // Shake effect
+    const dots=document.getElementById('pin-dots');
+    dots.style.animation='none'; dots.offsetHeight;
+    dots.style.animation='shake 0.4s ease';
+  }
+}
+
+function setupNum(n){ if(setupPinBuffer.length>=4) return; setupPinBuffer+=n; renderSetupDots(); }
+function setupDel(){ setupPinBuffer=setupPinBuffer.slice(0,-1); renderSetupDots(); }
+function finishSetup(){
+  const name=document.getElementById('setup-name').value.trim();
+  if(!name){ document.getElementById('setup-error').textContent='Escribe tu nombre.'; return; }
+  if(setupPinBuffer.length<4){ document.getElementById('setup-error').textContent='Completa el PIN de 4 dígitos.'; return; }
+  setUser({ name, pin:setupPinBuffer, since:today(), avatar:name.charAt(0).toUpperCase() });
+  setupPinBuffer='';
+  showToast('¡Perfil creado! Bienvenido '+name+' 🎉');
+  setTimeout(launchApp, 500);
+}
+
+function launchApp(){
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  initApp();
+}
+
+// ═══════════════════════════════════
+// APP INIT
+// ═══════════════════════════════════
+let currentTab = 'hoy';
+
+function initApp(){
+  const user=getUser();
+  if(!user) return;
+  // Header
+  const now=new Date();
+  const h=now.getHours();
+  const greet = h<12?'☀️ Buenos días':h<19?'🌤 Buenas tardes':'🌙 Buenas noches';
+  document.getElementById('h-greeting').textContent=greet.toUpperCase();
+  document.getElementById('h-date').textContent=`${DAYS_ES[now.getDay()]}, ${now.getDate()} de ${MONTHS[now.getMonth()]}`;
+  document.getElementById('avatar-btn').textContent=user.avatar;
+  document.getElementById('h-streak').textContent='🔥 '+getBestActiveStreak().streak+' días';
+  renderHoy();
+}
+
+// ═══════════════════════════════════
+// HOY
+// ═══════════════════════════════════
+function renderHoy(){
+  const k=today();
+  const data=getDay(k);
+  const count=data.habits.filter(Boolean).length;
+  // Ring
+  const circ=534;
+  const pct=count/N;
+  const offset=circ-(pct*circ);
+  const ring=document.getElementById('ring-fill');
+  setTimeout(()=>{ ring.style.strokeDashoffset=offset; },100);
+  const color = pct===0?'#334155':pct<0.3?'#ef4444':pct<0.6?'#f97316':pct<0.8?'#10b981':'#7c3aed';
+  ring.style.stroke=color;
+  document.getElementById('ring-num').textContent=count;
+  document.getElementById('ring-pct').textContent=Math.round(pct*100)+'%';
+  // Motivational
+  const phrases=[
+    [0,'Todo empieza con el primer paso. 💫'],
+    [0.11,'¡Arrancaste! El camino se hace al andar. 💪'],
+    [0.33,'Buen ritmo. Mantén el impulso. ⚡'],
+    [0.55,'Por encima del promedio. Sólido. 🔥'],
+    [0.77,'Casi ahí. Los últimos son los que marcan. 🎯'],
+    [0.89,'Un hábito más para el día perfecto. 👑'],
+    [1,'🎉 ¡DÍA PERFECTO! Eres exactamente quien dices ser.'],
+  ];
+  let phrase=phrases[0][1];
+  for(const [t,txt] of phrases){ if(pct>=t) phrase=txt; }
+  document.getElementById('motivational').textContent=phrase;
+  if(pct===1) launchConfetti();
+  // Grid
+  const grid=document.getElementById('habits-grid');
+  grid.innerHTML='';
+  data.habits.forEach((done,i)=>{
+    const h=HABITS[i];
+    const streak=calcStreak(i).streak;
+    const card=document.createElement('div');
+    card.className='habit-card'+(done?' done':'');
+    card.innerHTML=`
+      <div class="habit-top">
+        <div class="habit-emoji">${h.emoji}</div>
+        <div class="habit-checkbox"><div class="habit-checkmark">✓</div></div>
+      </div>
+      <div class="habit-name">${h.name}</div>
+      <div class="habit-streak-mini">${streak>0?'🔥 '+streak+' días consecutivos':'Iniciar racha'}</div>
+    `;
+    card.onclick=()=>toggleHabit(i);
+    grid.appendChild(card);
+  });
+  // Energy
+  ['baja','media','alta'].forEach(e=>{
+    document.getElementById('e-'+e).className='energy-btn'+(data.energy===e?' sel-'+e:'');
+  });
+  document.getElementById('note-input').value=data.note||'';
+}
+
+function toggleHabit(i){
+  const k=today();
+  const data=getDay(k);
+  data.habits[i]=!data.habits[i];
+  setDay(k,data);
+  renderHoy();
+  document.getElementById('h-streak').textContent='🔥 '+getBestActiveStreak().streak+' días';
+  // Pop
+  const cards=document.querySelectorAll('.habit-card');
+  if(cards[i]){
+    cards[i].classList.add('popping');
+    cards[i].addEventListener('animationend',()=>cards[i].classList.remove('popping'),{once:true});
+  }
+  if(data.habits[i]) showToast(HABITS[i].emoji+' '+HABITS[i].name+' ✓');
+}
+
+function setEnergy(e){
+  const k=today();
+  const data=getDay(k);
+  data.energy=data.energy===e?'':e;
+  setDay(k,data);
+  ['baja','media','alta'].forEach(x=>{
+    document.getElementById('e-'+x).className='energy-btn'+(data.energy===x?' sel-'+x:'');
+  });
+}
+
+function saveNote(){
+  const k=today();
+  const data=getDay(k);
+  data.note=document.getElementById('note-input').value;
+  setDay(k,data);
+}
+
+// ═══════════════════════════════════
+// SEMANA
+// ═══════════════════════════════════
+function renderSemana(){
+  const now=new Date();
+  const dow=now.getDay();
+  const monday=new Date(now);
+  monday.setDate(now.getDate()-((dow+6)%7));
+
+  const weekRow=document.getElementById('week-row');
+  const barWrap=document.getElementById('bar-wrap');
+  weekRow.innerHTML=''; barWrap.innerHTML='';
+
+  let maxC=0;
+  const counts=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(monday); d.setDate(monday.getDate()+i);
+    const k=dateKey(d);
+    const isToday=k===today();
+    const isFuture=d>now&&!isToday;
+    const c=isFuture?null:getDay(k).habits.filter(Boolean).length;
+    counts.push(c);
+    if(c!==null&&c>maxC) maxC=c;
+    const pct=c===null?null:Math.round(c/N*100);
+    let cls=isFuture?'wd-future':c===0?'wd-empty':pct<30?'wd-low':pct<60?'wd-mid':pct<100?'wd-good':'wd-perfect';
+    const div=document.createElement('div');
+    div.className='week-day';
+    div.innerHTML=`
+      <div class="wd-name">${DAYS_SHORT[i]}</div>
+      <div class="wd-circle ${cls}${isToday?' today':''}">${isFuture?'':c}</div>
+      <div class="wd-pct">${isFuture?'':(pct!==null?pct+'%':'')}</div>
+    `;
+    weekRow.appendChild(div);
+  }
+  // Bars
+  const barColors=['#1e293b','#ef4444','#f97316','#10b981','#7c3aed'];
+  counts.forEach((c,i)=>{
+    const col=document.createElement('div');
+    col.className='bar-col';
+    const h=c===null||maxC===0?0:Math.round(c/maxC*100);
+    const color=c===null?barColors[0]:c===0?barColors[0]:c/N<0.3?barColors[1]:c/N<0.6?barColors[2]:c/N<1?barColors[3]:barColors[4];
+    col.innerHTML=`<div class="bar-el" style="height:${h}%;background:${color};width:100%;"></div><div class="bar-lbl">${c!==null?c:''}</div>`;
+    barWrap.appendChild(col);
+  });
+
+  // Missed
+  const missedWrap=document.getElementById('missed-wrap');
+  missedWrap.innerHTML='';
+  const misses=new Array(N).fill(0);
+  let daysD=0;
+  for(let i=0;i<7;i++){
+    const d=new Date(monday); d.setDate(monday.getDate()+i);
+    if(d>now) continue;
+    const k=dateKey(d);
+    const data=getDay(k);
+    if(data.habits.some(Boolean)){ daysD++; data.habits.forEach((v,j)=>{ if(!v) misses[j]++; }); }
+  }
+  const sorted=misses.map((c,i)=>({i,c})).filter(x=>x.c>0).sort((a,b)=>b.c-a.c).slice(0,5);
+  if(!sorted.length){
+    missedWrap.innerHTML='<div style="color:var(--text2);font-size:14px;font-weight:500;">¡Sin hábitos fallados esta semana! 🎉</div>';
+  } else {
+    sorted.forEach(({i,c})=>{
+      const h=HABITS[i];
+      const el=document.createElement('div');
+      el.className='missed-row';
+      el.innerHTML=`<div class="missed-emoji">${h.emoji}</div><div class="missed-name-txt">${h.name}</div><div class="missed-track"><div class="missed-fill" style="width:${daysD?c/daysD*100:0}%"></div></div><div class="missed-n">${c}×</div>`;
+      missedWrap.appendChild(el);
+    });
+  }
+
+  // Best day
+  let bestI=-1, bestC=-1;
+  for(let i=0;i<7;i++){
+    const d=new Date(monday); d.setDate(monday.getDate()+i);
+    if(d>now) continue;
+    const c=getDay(dateKey(d)).habits.filter(Boolean).length;
+    if(c>bestC){ bestC=c; bestI=i; }
+  }
+  const bdw=document.getElementById('best-day-wrap');
+  if(bestI>=0&&bestC>0){
+    bdw.innerHTML=`<div class="best-day-box"><div class="best-day-icon">🌟</div><div class="best-day-info"><div class="label">Mejor día</div><div class="value">${DAYS_SHORT[bestI]} — ${bestC}/${N} hábitos (${Math.round(bestC/N*100)}%)</div></div></div>`;
+  } else {
+    bdw.innerHTML='';
+  }
+}
+
+// ═══════════════════════════════════
+// MES
+// ═══════════════════════════════════
+function renderMes(){
+  const now=new Date();
+  const y=now.getFullYear(), m=now.getMonth();
+  document.getElementById('month-title').textContent=`${MONTHS[m]} ${y}`;
+  const first=new Date(y,m,1);
+  const last=new Date(y,m+1,0);
+  const startDow=(first.getDay()+6)%7;
+
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML='';
+
+  let perfect=0, totalP=0, daysD=0, bestStr=0, curStr=0;
+
+  for(let i=0;i<startDow;i++){
+    const el=document.createElement('div');
+    el.className='cal-cell cal-empty';
+    grid.appendChild(el);
+  }
+  for(let d=1;d<=last.getDate();d++){
+    const date=new Date(y,m,d);
+    const k=dateKey(date);
+    const isToday=k===today();
+    const isFuture=date>now&&!isToday;
+    const data=getDay(k);
+    const c=data.habits.filter(Boolean).length;
+    const pct=c/N;
+    let cls='cal-nodata';
+    if(isFuture){ cls='cal-future'; curStr=0; }
+    else if(c===0){ cls='cal-nodata'; curStr=0; }
+    else{
+      daysD++; totalP+=pct; curStr++;
+      if(curStr>bestStr) bestStr=curStr;
+      cls=pct===1?'cal-perfect':pct>=0.8?'cal-good':pct>=0.5?'cal-mid':'cal-low';
+      if(pct===1) perfect++;
+    }
+    const el=document.createElement('div');
+    el.className=`cal-cell ${cls}${isToday?' cal-today-ring':''}`;
+    el.textContent=d;
+    el.onclick=()=>{ if(!isFuture) showPopup(k,date); };
+    grid.appendChild(el);
+  }
+
+  const avg=daysD>0?Math.round(totalP/daysD*100):0;
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-box"><div class="stat-n">${perfect}</div><div class="stat-l">Días perfectos</div></div>
+    <div class="stat-box"><div class="stat-n">${avg}%</div><div class="stat-l">Promedio del mes</div></div>
+    <div class="stat-box"><div class="stat-n">${bestStr}</div><div class="stat-l">Mejor racha</div></div>
+  `;
+
+  const hcWrap=document.getElementById('hc-wrap');
+  hcWrap.innerHTML='';
+  HABITS.forEach((h,i)=>{
+    let hits=0;
+    const total=Math.min(now.getDate(),last.getDate());
+    for(let d=1;d<=total;d++){
+      if(getDay(dateKey(new Date(y,m,d))).habits[i]) hits++;
+    }
+    const p=total>0?Math.round(hits/total*100):0;
+    const el=document.createElement('div');
+    el.className='hc-row';
+    el.innerHTML=`<div class="hc-em">${h.emoji}</div><div class="hc-nm">${h.name}</div><div class="hc-track"><div class="hc-fill" style="width:${p}%"></div></div><div class="hc-p">${p}%</div>`;
+    hcWrap.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════
+// RACHAS
+// ═══════════════════════════════════
+function calcStreak(i){
+  const now=new Date();
+  let streak=0, max=0, cur=0;
+  for(let d=0;d<365;d++){
+    const date=new Date(now); date.setDate(now.getDate()-d);
+    const done=getDay(dateKey(date)).habits[i];
+    if(done){ cur++; if(cur>max) max=cur; if(d===0||streak>0) streak++; }
+    else{ if(d===0) streak=0; else if(streak>0) streak=0; cur=0; }
+  }
+  // Recalc streak properly
+  streak=0;
+  for(let d=0;d<365;d++){
+    const date=new Date(now); date.setDate(now.getDate()-d);
+    if(getDay(dateKey(date)).habits[i]) streak++;
+    else break;
+  }
+  return {streak, max};
+}
+
+function getLevel(s){
+  if(s>=365) return {label:'👑 Leyenda',next:null,p:1};
+  if(s>=180) return {label:'💎 Élite',next:365,p:(s-180)/185};
+  if(s>=90) return {label:'🔥 Imparable',next:180,p:(s-90)/90};
+  if(s>=30) return {label:'⚡ En Racha',next:90,p:(s-30)/60};
+  if(s>=14) return {label:'💪 Construyendo',next:30,p:(s-14)/16};
+  if(s>=7) return {label:'🌱 Semilla',next:14,p:(s-7)/7};
+  return {label:'🎯 Iniciando',next:7,p:s/7};
+}
+
+function getBestActiveStreak(){
+  let best={streak:0,name:'',emoji:''};
+  HABITS.forEach((h,i)=>{
+    const {streak}=calcStreak(i);
+    if(streak>best.streak) best={streak,name:h.name,emoji:h.emoji};
+  });
+  return best;
+}
+
+function renderRachas(){
+  const best=getBestActiveStreak();
+  document.getElementById('ba-num').textContent=best.streak;
+  document.getElementById('ba-habit').textContent=best.streak>0?best.emoji+' '+best.name:'Sin rachas activas aún';
+  if(best.streak>0){
+    const lv=getLevel(best.streak);
+    document.getElementById('ba-level').textContent=lv.label;
+  } else document.getElementById('ba-level').textContent='';
+
+  const wrap=document.getElementById('streaks-wrap');
+  wrap.innerHTML='';
+  HABITS.forEach((h,i)=>{
+    const {streak,max}=calcStreak(i);
+    const alive=streak>0;
+    const lv=getLevel(streak);
+    const card=document.createElement('div');
+    card.className=`str-card ${alive?'alive':'dead'}`;
+    card.innerHTML=`
+      <div class="str-emoji">${h.emoji}</div>
+      <div class="str-info">
+        <div class="str-name">${h.name}</div>
+        <div class="str-lvl">${lv.label}${lv.next?' → '+lv.next+' días':''}</div>
+        <div class="str-pbar"><div class="str-pfill" style="width:${lv.p*100}%"></div></div>
+      </div>
+      <div class="str-right">
+        <div class="str-days">${streak}</div>
+        <div class="str-dlabel">días</div>
+        <div class="str-status">${alive?'🟢 Viva':'💀 Rota'}</div>
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════
+// TABS
+// ═══════════════════════════════════
+function switchTab(name){
+  currentTab=name;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if(name==='semana') renderSemana();
+  if(name==='mes') renderMes();
+  if(name==='rachas') renderRachas();
+}
+
+// ═══════════════════════════════════
+// PROFILE PANEL
+// ═══════════════════════════════════
+function openPanel(){
+  const user=getUser();
+  if(!user) return;
+  document.getElementById('panel-avatar').textContent=user.avatar;
+  document.getElementById('panel-name').textContent=user.name;
+  const since=user.since||today();
+  const d=new Date(since);
+  document.getElementById('panel-since').textContent=`Miembro desde ${d.getDate()} de ${MONTHS[d.getMonth()]} de ${d.getFullYear()}`;
+  // Stats
+  const best=getBestActiveStreak();
+  let totalDone=0, totalDays=0;
+  for(let d=0;d<90;d++){
+    const date=new Date(); date.setDate(date.getDate()-d);
+    const k=dateKey(date);
+    const raw=localStorage.getItem('day_'+k);
+    if(raw){ const data=JSON.parse(raw); if(data.habits.some(Boolean)){ totalDays++; totalDone+=data.habits.filter(Boolean).length; } }
+  }
+  const avg=totalDays>0?Math.round(totalDone/(totalDays*N)*100):0;
+  document.getElementById('panel-stats').innerHTML=`
+    <div class="ps-box"><div class="ps-num">${best.streak}</div><div class="ps-lbl">Mejor racha</div></div>
+    <div class="ps-box"><div class="ps-num">${totalDays}</div><div class="ps-lbl">Días activos</div></div>
+    <div class="ps-box"><div class="ps-num">${avg}%</div><div class="ps-lbl">Promedio</div></div>
+  `;
+  document.getElementById('panel-overlay').classList.add('open');
+}
+function closePanelClick(e){ if(e.target===document.getElementById('panel-overlay')) closePanel(); }
+function closePanel(){ document.getElementById('panel-overlay').classList.remove('open'); }
+function confirmLogout(){
+  if(confirm('¿Cerrar sesión? Tus datos se mantienen guardados.')){
+    closePanel();
+    document.getElementById('screen-app').classList.remove('active');
+    document.getElementById('screen-login').classList.add('active');
+    pinBuffer=''; renderPinDots();
+  }
+}
+function changePin(){
+  closePanel();
+  showToast('Función próximamente 🔒');
+}
+function exportData(){
+  const keys=Object.keys(localStorage).filter(k=>k.startsWith('day_'));
+  const data={user:getUser(), days:{}};
+  keys.forEach(k=>{ data.days[k.replace('day_','')]=JSON.parse(localStorage.getItem(k)); });
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='mis-habitos-backup.json'; a.click();
+  showToast('Datos exportados ✅');
+}
+
+// ═══════════════════════════════════
+// DAY POPUP
+// ═══════════════════════════════════
+function showPopup(k, date){
+  const data=getDay(k);
+  document.getElementById('popup-title').textContent=`${DAYS_ES[date.getDay()]} ${date.getDate()} de ${MONTHS[date.getMonth()]}`;
+  const list=document.getElementById('popup-habits-list');
+  list.innerHTML='';
+  HABITS.forEach((h,i)=>{
+    const el=document.createElement('div');
+    el.className='popup-habit-row';
+    el.innerHTML=`<div class="popup-status">${data.habits[i]?'✅':'⬜'}</div><div class="popup-habit-name">${h.emoji} ${h.name}</div>`;
+    list.appendChild(el);
+  });
+  if(data.energy) list.innerHTML+=`<div class="popup-habit-row"><div class="popup-status">${data.energy==='alta'?'🟢':data.energy==='media'?'🟡':'🔴'}</div><div class="popup-habit-name">Energía ${data.energy}</div></div>`;
+  if(data.note) list.innerHTML+=`<div style="margin-top:12px;padding:12px;background:var(--glass);border-radius:12px;font-size:13px;color:var(--text2);">"${data.note}"</div>`;
+  document.getElementById('popup-overlay').classList.add('open');
+}
+function closePopupClick(e){ if(e.target===document.getElementById('popup-overlay')) closePopup(); }
+function closePopup(){ document.getElementById('popup-overlay').classList.remove('open'); }
+
+// ═══════════════════════════════════
+// TOAST
+// ═══════════════════════════════════
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ═══════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════
+let confettiDone=false;
+function launchConfetti(){
+  if(confettiDone) return; confettiDone=true;
+  setTimeout(()=>confettiDone=false,3000);
+  const colors=['#7c3aed','#a855f7','#c084fc','#10b981','#f59e0b','#ffffff','#f97316'];
+  for(let i=0;i<70;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='cf';
+      el.style.cssText=`left:${Math.random()*100}vw;top:-20px;width:${Math.random()*10+5}px;height:${Math.random()*10+5}px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*2+1.5}s;`;
+      document.body.appendChild(el);
+      el.addEventListener('animationend',()=>el.remove());
+    },i*25);
+  }
+}
+
+// ═══════════════════════════════════
+// AUTO-LOGIN IF SESSION ACTIVE
+// ═══════════════════════════════════
+window.addEventListener('load',()=>{
+  // Add shake keyframe
+  const style=document.createElement('style');
+  style.textContent='@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}';
+  document.head.appendChild(style);
+
+  const user=getUser();
+  if(!user){ showSetup(); }
+  // Stay on login screen - user must enter PIN
+});
+</script>
+</body>
+</html>
